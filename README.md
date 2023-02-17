@@ -1,4 +1,4 @@
-# Gucci Playground (experiment with Aws, Kotlin & Local Development)
+# Gucci Playground (experiment with Aws, Mulesoft & Local Development)
 
 ## Coding core
 
@@ -63,7 +63,7 @@ This layer manages the following operations:
 
 ## Draw.io diagram
 
-[System Diagram](support/guccidemomulo.jpg)
+[System Diagram](support/guccidemomulo.png)
 
 
 ## AWS 
