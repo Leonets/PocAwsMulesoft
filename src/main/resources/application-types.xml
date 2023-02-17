@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="orders" format="json">
+      <types:shape format="weave" example="examples/orders.json"><![CDATA[%dw 2.0
+
+type orders = {|
+  ordersList: Array<{|    item: String,     size: String,     price: Number {"typeId": "int"},     color: String,     address: String,     cap: String,     destinationCountry: String  |}>
+|} {"example": "{\\\"ordersList\\\":[{\\\"item\\\":\\\"id1\\\",\\\"size\\\":\\\"M\\\",\\\"price\\\":1800,\\\"color\\\":\\\"blue\\\",\\\"address\\\":\\\"Via Roma, 2\\\",\\\"cap\\\":\\\"50144\\\",\\\"destinationCountry\\\":\\\"IT\\\"},{\\\"item\\\":\\\"id2\\\",\\\"size\\\":\\\"L\\\",\\\"price\\\":4000,\\\"color\\\":\\\"blue\\\",\\\"address\\\":\\\"Rue Habc 2\\\",\\\"cap\\\":\\\"45355\\\",\\\"destinationCountry\\\":\\\"JP\\\"},{\\\"item\\\":\\\"id3\\\",\\\"size\\\":\\\"M\\\",\\\"price\\\":600,\\\"color\\\":\\\"blue\\\",\\\"address\\\":\\\"Rue balzac, 2\\\",\\\"cap\\\":\\\"45445\\\",\\\"destinationCountry\\\":\\\"FR\\\"}]}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="order" format="json">
+      <types:shape format="weave" example="examples/order.json"><![CDATA[%dw 2.0
+
+type order = {|
+  item: String, 
+  size: String, 
+  price: Number {"typeId": "int"}, 
+  color: String, 
+  address: String, 
+  cap: String, 
+  destinationCountry: String
+|} {"example": "{\\\"item\\\":\\\"id1\\\",\\\"size\\\":\\\"M\\\",\\\"price\\\":1800,\\\"color\\\":\\\"blue\\\",\\\"address\\\":\\\"Via Roma, 2\\\",\\\"cap\\\":\\\"50144\\\",\\\"destinationCountry\\\":\\\"IT\\\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#bf18632b-c915-463f-b3e3-9f74c9c69e49">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="orders"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#6e22358e-68c2-46ed-9f82-b699146cec4a">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="order"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#78573171-d9bf-4fa1-871b-01f7ff7d6740">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="order"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#7c87f7cb-9fca-4cbd-8bd6-47c42d5926b2">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="order"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#cfa928dc-05ef-4e80-9c57-79185e521bad">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="order"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#d3c86bef-7d0b-4dfd-b3d0-0a434794ce01">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="order"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:sns="http://www.mulesoft.org/schema/mule/sns" 
+	xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" 
+	xmlns:s3="http://www.mulesoft.org/schema/mule/s3" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd
+http://www.mulesoft.org/schema/mule/sns http://www.mulesoft.org/schema/mule/sns/current/mule-sns.xsd
+http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/current/mule-s3.xsd">
+    <sqs:config name="Amazon_SQS_Configuration" doc:name="Amazon SQS Configuration" doc:id="74b4a4d3-b23a-4a1d-92a2-bfdc36000481" defaultQueueUrl="${queue.marketing.url}">
+		<sqs:basic-connection testQueueArn="arn:aws:sqs:eu-central-1:000000000000:dev-mao-shipping-events" accessKey="mule" secretKey="mule" customSqsEndpoint="${queue.url}" region="eu-central-1"/>
+	</sqs:config>
+	<sns:config name="Amazon_SNS_configuration" doc:name="Amazon SNS configuration" doc:id="3df5fa99-3882-45df-bed5-5309401ca110" defaultTopicArn="${topic.urn}">
+		<sns:basic-connection testTopic="${topic.urn}" accessKey="  1" secretKey=" 1" customServiceEndpoint="${topic.url}" region="EU_CENTRAL_1"/>
+	</sns:config>
+	<s3:config name="Amazon_S3_Configuration" doc:name="Amazon S3 Configuration" doc:id="312fc852-ce91-4f46-9513-fbc69c620c95" >
+		<s3:connection accessKey="mule" secretKey="mule" region="eu-central-1" customServiceEndpoint="${s3.url}"/>
+	</s3:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="c8f88860-aa50-4126-8cb4-ee05feac343c" file="properties-${mule.env}.yaml" />
+	
+	<http:request-config name="MOCK_HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="5e5ef9de-ebd6-4c75-8e3b-74968700baf8" basePath="/mock/" >
+		<http:request-connection host="${mock.http.host}" port="${mock.http.port}" />
+	</http:request-config>
+	<global-property doc:name="Global Property" doc:id="cbea7eca-1c4f-4a65-b664-079cc798e464" name="mule.env" value="localaws" />
+</mule>

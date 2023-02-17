@@ -1,0 +1,83 @@
+#%RAML 1.0
+title: GucciDemo
+types:
+  orders:
+    description: |
+      {
+          "Orders": 
+            "Order": {
+              "item": "id1",
+              "size": "M"
+              "price": 400,
+              "color": "blue",
+              "address": "via roma 1",
+              "cap": "50144",
+              "destinationCountry": "IT"
+            },
+            "Order": {
+              "item": "id2",
+              "size": "M"
+              "price": 4000,
+              "color": "red",
+              "address": "via nazionale 1",
+              "cap": "50100",
+              "destinationCountry": "IT"
+            }
+      }
+    type: object
+  ordersSummary:
+    description: |
+      {
+          "Orders": 
+            "Country": {
+              "numberOfOrders": "10",
+              "totalAmount": 4000,
+              "country": "IT"
+            },
+            "Country": {
+              "numberOfOrders": "30",
+              "totalAmount": 5600,
+              "country": "JP"
+            }                
+      }
+    type: object    
+baseUri: http://localhost:8080/v1
+description: API for receiving orders in the system
+mediaType:
+  - application/json
+protocols:
+  - HTTPS
+/orders:
+  post:
+    displayName: Receives orders data from the web client 
+    body:
+      application/json:
+        type: orders
+    securedBy: []
+/dashboard:    
+  get:
+    displayName: Show the total amount of orders per country
+    responses:
+      "200":
+        body:
+          application/json:
+            type: ordersSummary
+    securedBy: []
+/shipping:    
+  get:
+    displayName: Get the list of all received orders
+    responses:
+      "200":
+        body:
+          application/json:
+            type: orders
+    securedBy: []    
+/shipping/{country}:    
+  get:
+    displayName: Get the list of all received orders filtered by country
+    responses:
+      "200":
+        body:
+          application/json:
+            type: orders
+    securedBy: []      

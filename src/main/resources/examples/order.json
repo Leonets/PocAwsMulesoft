@@ -1,0 +1,9 @@
+	{
+		"item": "id1",
+		"size": "M",
+		"price": 1800,
+		"color": "blue",
+		"address": "Via Roma, 2",
+		"cap": "50144",
+		"destinationCountry": "IT"
+	}
