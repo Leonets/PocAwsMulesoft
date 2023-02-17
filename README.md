@@ -79,6 +79,19 @@ Default region name [eu-central-1]:
 
 Default output format [json]: json
 
+## Mulesoft application
+
+To start the mulesoft application you have to decide which cloud simulator stack you are using between elasticmq and localstack
+
+To start the mule configured with the localstack, add the following:
+
+-Dmule.env=localstack
+
+
+To start the mule configured with the localaws, add the following
+
+-Dmule.env=localaws
+
 ## ElasticMQ as a cloud service emulator (first possible alternative, node process speed up the CPU on Ubuntu 20.04)
 
 **Execute the ElasticMQ stack in this way**:
