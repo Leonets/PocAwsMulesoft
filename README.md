@@ -72,17 +72,26 @@ Having AWS configured in this way:
 
 aws configure
 AWS Access Key ID [****************dKey]: mule
+
 AWS Secret Access Key [****************cret]: mule
+
 Default region name [eu-central-1]: 
+
 Default output format [json]: json
 
-## Localstack as a cloud service emulator
+## ElasticMQ as a cloud service emulator (first possible alternative, node process speed up the CPU on Ubuntu 20.04)
 
-Execute the LocalStack in this way:
+**Execute the ElasticMQ stack in this way**:
 
-AnypointStudioWorkspace/guccidemo/support/localstack$ docker compose up
+AnypointStudioWorkspace/guccidemo/support/elasticmq$ **docker compose up**
 
-### Prepare the environment (Queues)
+## Localstack as a cloud service emulator (second possible alternative)
+
+**Execute the LocalStack in this way**:
+
+AnypointStudioWorkspace/guccidemo/support/localstack$ **docker compose up**
+
+### Prepare the environment over the LocalStack (Queues)
 
 Create the Queue with Aws cli:
 
@@ -101,7 +110,7 @@ aws --endpoint-url=[http://localhost:4566](http://localhost:4566) sqs create-que
 
 the ARN of this queue is "arn:aws:sqs:eu-central-1:000000000000:dev-mao-shipping-events"
 
-### Prepare the environment (Topics)
+### Prepare the environment over the LocalStack (Topics)
 
 Create the Topic with Aws cli:
 
@@ -109,7 +118,7 @@ aws sns create-topic --name local-topic --endpoint-url [http://localhost:4566](h
  "TopicArn": "TopicArn": "arn:aws:sns:eu-central-1:000000000000:local-topic"
 }
 
-### Prepare the environment (Configure the AWS connectors)
+### Prepare the environment (Anypoint) (Configure the AWS connectors)
 
 Configure in this way
 
@@ -131,11 +140,11 @@ Configure in this way
 
 [https://docs.localstack.cloud/](https://docs.localstack.cloud/)
 
-### Tools developed for a quick provision
+### Tools developed for a quick provision (LocalStack)
 
 There were developed two script for preparing and checking the Localstack infrastructure
 
-- support/localstack/prepare.sh (prepare the queues, the topic and its subscriptions)
+- **support/localstack/prepare.sh** (prepare the queues, the topic and its subscriptions)
 
 ```
 {
@@ -158,7 +167,7 @@ There were developed two script for preparing and checking the Localstack infras
 }
 ```
 
-- support/localstack/check.sh (checks if anything has been correctly executed)
+- **support/localstack/check.sh** (checks if anything has been correctly executed)
 
 ```
 {
