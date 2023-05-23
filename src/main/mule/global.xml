@@ -25,4 +25,5 @@ http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/cu
 		<http:request-connection host="${mock.http.host}" port="${mock.http.port}" />
 	</http:request-config>
 	<global-property doc:name="Global Property" doc:id="cbea7eca-1c4f-4a65-b664-079cc798e464" name="mule.env" value="localaws" />
+	<configuration-properties doc:name="Configuration properties" doc:id="7ca64a4c-c618-4201-8b5a-88426f4a66e1" file="properties.yaml" />
 </mule>

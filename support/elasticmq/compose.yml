@@ -9,7 +9,7 @@ services:
   sqs:
     depends_on:
       - s3
-    image: roribio16/alpine-sqs
+    image: rciorba/alpine-sqs
     ports:
       - "9324:9324"
       - "9325:9325"

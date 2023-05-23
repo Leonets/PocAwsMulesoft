@@ -149,11 +149,14 @@ output application/json
 		<set-payload value="Check executed" doc:name="Set Payload" doc:id="d879f77e-ce4b-42e9-a63a-020d0579e6f4" />
 		<logger level="INFO" message="#[payload]" />
 	</flow>
-	<flow name="get:\dashboard:guccidemo-config">
-		<s3:list-objects doc:name="List Objects" doc:id="26731329-e07a-4a79-b708-101ae83e214f" config-ref="Amazon_S3_Configuration" bucketName="guccidemo"/>
-		<set-variable value="#[[]]" doc:name="Set Variable amountListByCountry" doc:id="d536e328-a6a6-4807-b350-f610f75cf407" variableName="amountListByCountry"/>
+	<flow name="get:\shipping:guccidemo-config">
+		<logger level="INFO" message="#[payload]" doc:name="Logger Payload"/>
+    </flow>
+    <flow name="get:\shipping\(country):guccidemo-config">
+        <s3:list-objects doc:name="List Objects" doc:id="26731329-e07a-4a79-b708-101ae83e214f" config-ref="Amazon_S3_Configuration" bucketName="guccidemo" />
+		<set-variable value="#[[]]" doc:name="Set Variable amountListByCountry" doc:id="d536e328-a6a6-4807-b350-f610f75cf407" variableName="amountListByCountry" />
 		<foreach doc:name="For Each" doc:id="83d9f1e0-ed88-4cf9-a1a6-19de3daf6c4c" collection="#[payload]">
-			<s3:get-object doc:name="Get Object" doc:id="3325ce8d-e2f9-4e13-9748-8d16a8e1bf29" config-ref="Amazon_S3_Configuration" bucketName="guccidemo" key="#[payload.key]"/>
+			<s3:get-object doc:name="Get Object" doc:id="3325ce8d-e2f9-4e13-9748-8d16a8e1bf29" config-ref="Amazon_S3_Configuration" bucketName="guccidemo" key="#[payload.key]" />
 			<ee:transform doc:name="Transform Message" doc:id="d3c86bef-7d0b-4dfd-b3d0-0a434794ce01">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -162,11 +165,11 @@ output application/json
 read(payload,"application/json")]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-			<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;vars.amountListByCountry + payload]" doc:name="Set Variable" doc:id="ba6e2fc1-54ae-4ed9-be5f-ab7bb2d090e6" variableName="amountListByCountry"/>
+			<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;vars.amountListByCountry + payload]" doc:name="Set Variable" doc:id="ba6e2fc1-54ae-4ed9-be5f-ab7bb2d090e6" variableName="amountListByCountry" />
 		</foreach>
-		<ee:transform doc:name="Transform Message" doc:id="3a41f031-9b7a-4634-be36-aa1df8d9e543" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+		<ee:transform doc:name="Transform Message" doc:id="3a41f031-9b7a-4634-be36-aa1df8d9e543">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 vars.amountListByCountry groupBy (item) -> item.destinationCountry
@@ -174,13 +177,7 @@ vars.amountListByCountry groupBy (item) -> item.destinationCountry
 			</ee:message>
 		</ee:transform>
 		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="9079ec85-f504-4ac8-b4d3-f5f07cdb0ea1" />
-		<logger level="INFO" doc:name="Logger" doc:id="8e9064d8-b0cb-459f-8ffe-6c839e50c87a" message="#[payload]"/>
-    </flow>
-	<flow name="get:\shipping:guccidemo-config">
-		<logger level="INFO" message="#[payload]" doc:name="Logger Payload"/>
-    </flow>
-    <flow name="get:\shipping\(country):guccidemo-config">
-        <sqs:send-message doc:name="Send message" doc:id="9e422da3-8034-4cbd-b182-631109d872d3" config-ref="Amazon_SQS_Configuration" queueUrl="${queue.marketing.url}" />
+		<logger level="INFO" doc:name="Logger" doc:id="8e9064d8-b0cb-459f-8ffe-6c839e50c87a" message="#[payload]" />
 		<logger level="INFO" message="get:\shipping\(country):guccidemo-config" />
     </flow>
     <flow name="post:\orders:application\json:guccidemo-config">
@@ -270,6 +267,7 @@ output application/java
 		<set-variable value='#[attributes."sqs.message.receipt.handle"]' doc:name="Set ReceiptHandle Variable" doc:id="44049f00-557f-47cd-8c92-94dd94bf5bd2" variableName="ReceiptHandle" />
 		<logger level="INFO" doc:name="Log payload received from Order Queue" doc:id="dc27f083-9a9a-4887-885f-1e4aacf45ef8" message="#[payload]" />
 		<sqs:delete-message doc:name="Delete message" doc:id="dd4dba42-0615-4016-97c7-e89ed16f024e" config-ref="Amazon_SQS_Configuration" receiptHandle="#[vars.ReceiptHandle]" />
+		<http:request method="GET" doc:name="Forward to Order External System" doc:id="7bd656c8-550c-49e5-95d7-3c7d2368c0e2" config-ref="MOCK_HTTP_Request_configuration" path="Order" />
 	</flow>
 	<flow name="receiveAccountingMessages" doc:id="b782228e-1e2d-42dd-9acb-7fc35a5d865c" >
 		<sqs:receivemessages doc:name="Receive messages from Accounting Queue" doc:id="5a35e1f2-49f7-4c70-a8db-8bf40223f1fa" config-ref="Amazon_SQS_Configuration" visibilityTimeout="${queue.visibility.timeout}" queueUrl="${queue.accounting.url}" frequency="${queue.frequency}" >
@@ -278,6 +276,7 @@ output application/java
 		<set-variable value='#[attributes."sqs.message.receipt.handle"]' doc:name="Set ReceiptHandle Variable" doc:id="5a65d2ff-e9c4-4cc3-86e0-bae7aad8aa59" variableName="ReceiptHandle" />
 		<logger level="INFO" doc:name="Log payload received from Accounting Queue" doc:id="8800e602-45a7-4e9b-99c0-b3becf984e8a" message="#[payload]" />
 		<sqs:delete-message doc:name="Delete message" doc:id="90206548-2358-4adb-aeab-3f94a132904f" config-ref="Amazon_SQS_Configuration" receiptHandle="#[vars.ReceiptHandle]" />
+		<http:request method="GET" doc:name="Forward to Accounting External System" doc:id="5e151ad4-62a7-4940-a13d-b1ac0beb2eee" config-ref="MOCK_HTTP_Request_configuration" path="Accounting"/>
 	</flow>
 	<flow name="receiveShippingMessages" doc:id="1de1b66d-c508-4fab-8840-f431f18b86cb" >
 		<sqs:receivemessages doc:name="Receive messages from Shipping Queue" doc:id="feecd7ec-402c-4fba-b71e-1fba5af51afe" config-ref="Amazon_SQS_Configuration" visibilityTimeout="${queue.visibility.timeout}" queueUrl="${queue.shipping.url}" frequency="${queue.frequency}" >
@@ -285,6 +284,7 @@ output application/java
 		</sqs:receivemessages>
 		<set-variable value='#[attributes."sqs.message.receipt.handle"]' doc:name="Set ReceiptHandle Variable" doc:id="e640ec89-2220-4981-90f3-61875806ecfc" variableName="ReceiptHandle" />
 		<logger level="INFO" doc:name="Log payload received from Shipping Queue" doc:id="5c337f2a-a56d-4482-815d-c95543d58991" message="#[payload]" />
-		<sqs:delete-message doc:name="Delete message" doc:id="93207208-c7ae-46bc-8692-d5cb8c08432a" config-ref="Amazon_SQS_Configuration" receiptHandle="#[vars.ReceiptHandle]" />
+		<sqs:delete-message doc:name="Delete Message" doc:id="93207208-c7ae-46bc-8692-d5cb8c08432a" config-ref="Amazon_SQS_Configuration" receiptHandle="#[vars.ReceiptHandle]" />
+		<http:request method="GET" doc:name="Forward to Shipping External System" doc:id="a51f655e-1f52-4425-9c89-6b5e73562068" config-ref="MOCK_HTTP_Request_configuration" path="Shipping" />
 	</flow>		
 </mule>
