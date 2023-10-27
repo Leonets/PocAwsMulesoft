@@ -32,6 +32,11 @@
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>
+				<groupId>it.florenceconsulting.mule</groupId>
+				<artifactId>muleflow-maven-plugin</artifactId>
+				<version>0.1.0</version>
+			</plugin>
+			<plugin>
 				<groupId>com.mulesoft.munit.tools</groupId>
 				<artifactId>munit-maven-plugin</artifactId>
 				<version>${munit.version}</version>

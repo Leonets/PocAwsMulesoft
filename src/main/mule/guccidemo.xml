@@ -4,21 +4,21 @@ http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/
 http://www.mulesoft.org/schema/mule/sns http://www.mulesoft.org/schema/mule/sns/current/mule-sns.xsd
 http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/current/mule-s3.xsd
 http://www.mulesoft.org/schema/mule/tracing http://www.mulesoft.org/schema/mule/tracing/current/mule-tracing.xsd">
-    <http:listener-config name="guccidemo-httpListenerConfig">
+    <http:listener-config name="gucciDemoHttpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="9000" />
     </http:listener-config>
-    <apikit:config name="guccidemo-config" api="guccidemo.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="gucciDemoConfig" api="guccidemo.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 	<flow name="guccidemo-main">
-        <http:listener config-ref="guccidemo-httpListenerConfig" path="/api/*">
+        <http:listener config-ref="gucciDemoHttpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
-		<apikit:router config-ref="guccidemo-config" />
+		<apikit:router config-ref="gucciDemoConfig" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
                 <ee:transform>
@@ -100,7 +100,7 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="guccidemoFlow" doc:id="0b637abb-3e46-4257-b25d-2f118b239a5a" >
+    <flow name="gucci-demo-flow" doc:id="0b637abb-3e46-4257-b25d-2f118b239a5a" >
 		<scheduler doc:name="Scheduler" doc:id="1bf0b0d3-1089-4ba9-8e3d-7e400d231639" >
 			<scheduling-strategy >
 				<fixed-frequency frequency="10000" timeUnit="DAYS"/>
@@ -109,16 +109,16 @@ output application/json
 		<s3:create-bucket doc:name="Create Bucket" doc:id="d409ffb0-0c1e-4edd-94cf-def924001d3c" bucketName="guccidemo" config-ref="Amazon_S3_Configuration" />
 	</flow>
 	<flow name="guccidemo-console">
-        <http:listener config-ref="guccidemo-httpListenerConfig" path="/console/*">
+        <http:listener config-ref="gucciDemoHttpListenerConfig" path="/console/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:console config-ref="guccidemo-config" />
+        <apikit:console config-ref="gucciDemoConfig" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
                 <ee:transform>
@@ -135,8 +135,8 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-	<flow name="checkEnvironment" doc:id="ac9c1d47-80d8-4c45-af20-f14cbfbf5c2c">
-		<http:listener doc:name="Listener for Check Environment (/check)" doc:id="d290be0a-5304-4dc8-b4c4-2d358d30445c" config-ref="guccidemo-httpListenerConfig" path="/check" />
+	<flow name="check-environment" doc:id="ac9c1d47-80d8-4c45-af20-f14cbfbf5c2c">
+		<http:listener doc:name="Listener for Check Environment (/check)" doc:id="d290be0a-5304-4dc8-b4c4-2d358d30445c" config-ref="gucciDemoHttpListenerConfig" path="/check" />
 		<logger level="INFO" doc:name="Logger Check" doc:id="dbcec532-e682-4e89-9095-2c6203fb89cd" message="#['Check this' ++ payload]" />
 		<sqs:list-queues doc:name="List queues" doc:id="7bdbe5c3-96b8-4c28-a592-f2907f616cce" config-ref="Amazon_SQS_Configuration" />
 		<logger level="INFO" doc:name="Logger Payload" doc:id="3e6a40a7-e1d3-4f38-a41d-508901d2545f" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" />
@@ -149,10 +149,10 @@ output application/json
 		<set-payload value="Check executed" doc:name="Set Payload" doc:id="d879f77e-ce4b-42e9-a63a-020d0579e6f4" />
 		<logger level="INFO" message="#[payload]" />
 	</flow>
-	<flow name="get:\shipping:guccidemo-config">
+	<flow name="get:\shipping:gucciDemoConfig">
 		<logger level="INFO" message="#[payload]" doc:name="Logger Payload"/>
     </flow>
-    <flow name="get:\shipping\(country):guccidemo-config">
+    <flow name="get:\shipping\(country):gucciDemoConfig">
         <s3:list-objects doc:name="List Objects" doc:id="26731329-e07a-4a79-b708-101ae83e214f" config-ref="Amazon_S3_Configuration" bucketName="guccidemo" />
 		<set-variable value="#[[]]" doc:name="Set Variable amountListByCountry" doc:id="d536e328-a6a6-4807-b350-f610f75cf407" variableName="amountListByCountry" />
 		<foreach doc:name="For Each" doc:id="83d9f1e0-ed88-4cf9-a1a6-19de3daf6c4c" collection="#[payload]">
@@ -180,7 +180,7 @@ vars.amountListByCountry groupBy (item) -> item.destinationCountry
 		<logger level="INFO" doc:name="Logger" doc:id="8e9064d8-b0cb-459f-8ffe-6c839e50c87a" message="#[payload]" />
 		<logger level="INFO" message="get:\shipping\(country):guccidemo-config" />
     </flow>
-    <flow name="post:\orders:application\json:guccidemo-config">
+    <flow name="post:\orders:application\json:gucciDemoConfig">
 		<tracing:set-logging-variable doc:name="Set logging variable for Orders" doc:id="1439c7b0-14a2-4daa-b7e5-3237dc77602d" variableName="orders" value="#['Order' ++ randomInt(1000) as String {format: &quot;#&quot;}]"/>
 		<foreach doc:name="For Each" doc:id="bf18632b-c915-463f-b3e3-9f74c9c69e49" collection="#[payload.ordersList]">
 			<scatter-gather doc:name="Scatter-Gather" doc:id="2ababcc3-ba2b-4ca4-9c84-6f0b69764c28" >
@@ -218,7 +218,7 @@ output application/java
 			</scatter-gather>
 		</foreach>
     </flow>
-	<flow name="receiveMarketingMessages" doc:id="801f52cd-2335-4b4e-893a-366a788671ef" >
+	<flow name="receive-marketing-messages" doc:id="801f52cd-2335-4b4e-893a-366a788671ef" >
 		<sqs:receivemessages doc:name="Receive messages from Marketing Queue" doc:id="cfa928dc-05ef-4e80-9c57-79185e521bad" config-ref="Amazon_SQS_Configuration" queueUrl="${queue.marketing.url}" preserveMessages="true" visibilityTimeout="${queue.visibility.timeout}" frequency="${queue.frequency}">
 			<reconnect frequency="60000" />
 		</sqs:receivemessages>
@@ -260,7 +260,7 @@ output application/java
 		<logger level="INFO" doc:name="Log payload received from Pricing Policy Queue" doc:id="8d54411a-12c3-453d-abce-557da428cc64" message="#[payload]" />
 	</flow>
 	
-	<flow name="receiveOrderMessages" doc:id="8890afe4-1ba2-4236-86ae-cc552eab470c" >
+	<flow name="receive-order-messages" doc:id="8890afe4-1ba2-4236-86ae-cc552eab470c" >
 		<sqs:receivemessages doc:name="Receive messages from Order Queue" doc:id="9e6330e1-818e-4f8c-993a-9591867b39ff" config-ref="Amazon_SQS_Configuration" queueUrl="${queue.order.url}" visibilityTimeout="${queue.visibility.timeout}" frequency="${queue.frequency}">
 			<reconnect frequency="20000" />
 		</sqs:receivemessages>
@@ -269,7 +269,7 @@ output application/java
 		<sqs:delete-message doc:name="Delete message" doc:id="dd4dba42-0615-4016-97c7-e89ed16f024e" config-ref="Amazon_SQS_Configuration" receiptHandle="#[vars.ReceiptHandle]" />
 		<http:request method="GET" doc:name="Forward to Order External System" doc:id="7bd656c8-550c-49e5-95d7-3c7d2368c0e2" config-ref="MOCK_HTTP_Request_configuration" path="Order" />
 	</flow>
-	<flow name="receiveAccountingMessages" doc:id="b782228e-1e2d-42dd-9acb-7fc35a5d865c" >
+	<flow name="receive-accounting-messages" doc:id="b782228e-1e2d-42dd-9acb-7fc35a5d865c" >
 		<sqs:receivemessages doc:name="Receive messages from Accounting Queue" doc:id="5a35e1f2-49f7-4c70-a8db-8bf40223f1fa" config-ref="Amazon_SQS_Configuration" visibilityTimeout="${queue.visibility.timeout}" queueUrl="${queue.accounting.url}" frequency="${queue.frequency}" >
 			<reconnect frequency="20000" />
 		</sqs:receivemessages>
@@ -278,7 +278,7 @@ output application/java
 		<sqs:delete-message doc:name="Delete message" doc:id="90206548-2358-4adb-aeab-3f94a132904f" config-ref="Amazon_SQS_Configuration" receiptHandle="#[vars.ReceiptHandle]" />
 		<http:request method="GET" doc:name="Forward to Accounting External System" doc:id="5e151ad4-62a7-4940-a13d-b1ac0beb2eee" config-ref="MOCK_HTTP_Request_configuration" path="Accounting"/>
 	</flow>
-	<flow name="receiveShippingMessages" doc:id="1de1b66d-c508-4fab-8840-f431f18b86cb" >
+	<flow name="receive-shipping-messages" doc:id="1de1b66d-c508-4fab-8840-f431f18b86cb" >
 		<sqs:receivemessages doc:name="Receive messages from Shipping Queue" doc:id="feecd7ec-402c-4fba-b71e-1fba5af51afe" config-ref="Amazon_SQS_Configuration" visibilityTimeout="${queue.visibility.timeout}" queueUrl="${queue.shipping.url}" frequency="${queue.frequency}" >
 			<reconnect frequency="20000" />
 		</sqs:receivemessages>
